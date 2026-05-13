@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Uso — Sistema QR Institucional Mentora</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --p:#289889;--pl:#71C9CD;--pbg:#e8f7f5;--pbg2:#d0efec;
+  --green:#97C94C;--yellow:#FBB634;--orange:#E88439;--danger:#B84041;
+  --gray:#6B6C6E;--bg:#f0f7f6;--white:#fff;--border:#d0ecea;
+  --text:#1a2e2b;--muted:#6B6C6E;--dark:#0d1f1d
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+
+/* ── HEADER ── */
+.hero{background:linear-gradient(135deg,#0d4f46 0%,var(--p) 50%,var(--pl) 100%);padding:60px 24px 50px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-logo{background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:8px 20px;display:inline-flex;align-items:center;margin-bottom:28px;gap:12px}
+.hero-logo img{height:38px;width:auto}
+.hero-logo span{color:#fff;font-weight:900;font-size:22px;letter-spacing:-.5px}
+.hero h1{color:#fff;font-size:clamp(26px,5vw,42px);font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:14px}
+.hero p{color:rgba(255,255,255,.85);font-size:clamp(14px,2.5vw,18px);max-width:560px;margin:0 auto 28px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:8px 20px;color:#fff;font-size:13px;font-weight:700}
+
+/* ── LAYOUT ── */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+
+/* ── NAV SIDEBAR ── */
+.layout{display:grid;grid-template-columns:220px 1fr;gap:32px;padding:40px 20px;max-width:1100px;margin:0 auto}
+@media(max-width:768px){.layout{grid-template-columns:1fr;padding:24px 16px}}
+.sidebar{position:sticky;top:24px;height:fit-content}
+.sidebar-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.sidebar-card h3{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.nav-link{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;transition:all .2s;margin-bottom:2px}
+.nav-link:hover,.nav-link.active{background:var(--pbg);color:var(--p)}
+.nav-link .ico{width:22px;height:22px;border-radius:6px;background:var(--pbg);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.nav-link.active .ico{background:var(--p)}
+@media(max-width:768px){.sidebar{position:static;display:none}}
+
+/* ── CONTENT ── */
+.content{min-width:0}
+section{margin-bottom:48px;scroll-margin-top:24px}
+section h2{font-size:22px;font-weight:900;color:var(--dark);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+section h2 .s-ico{width:38px;height:38px;border-radius:12px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+
+/* ── STEP CARDS ── */
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:box-shadow .2s}
+.step:hover{box-shadow:0 4px 16px rgba(40,152,137,.12)}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--p);color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body h3{font-size:16px;font-weight:800;margin-bottom:6px;color:var(--dark)}
+.step-body p{font-size:14px;color:var(--muted);line-height:1.6}
+.step-body ul{margin-top:8px;padding-left:18px}
+.step-body ul li{font-size:14px;color:var(--muted);margin-bottom:4px;line-height:1.5}
+
+/* ── SCREEN MOCKUPS ── */
+.mockup{background:#fff;border:2px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.08);margin:16px 0}
+.mockup-bar{background:linear-gradient(90deg,var(--p),var(--pl));padding:10px 16px;display:flex;align-items:center;gap:8px}
+.mockup-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.4)}
+.mockup-title{color:rgba(255,255,255,.9);font-size:12px;font-weight:700;margin-left:4px}
+.mockup-body{padding:20px}
+
+/* ── CALLOUTS ── */
+.callout{display:flex;gap:12px;padding:14px 16px;border-radius:12px;margin:14px 0;font-size:14px;line-height:1.5}
+.callout-tip{background:#e8f7f0;border:1px solid #a0dfbf;color:#1a6040}
+.callout-warn{background:#fff8e8;border:1px solid #f0d88a;color:#7a5500}
+.callout-danger{background:#fff0f0;border:1px solid #f0c0c0;color:#8b2020}
+.callout-info{background:var(--pbg);border:1px solid #a0ddd8;color:#1a5050}
+.callout-ico{font-size:20px;flex-shrink:0;line-height:1}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--p);color:#fff;padding:10px 14px;text-align:left;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+th:first-child{border-radius:11px 0 0 0}th:last-child{border-radius:0 11px 0 0}
+td{padding:10px 14px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+tr:last-child td{border-bottom:none}tr:nth-child(even) td{background:#fafdfb}
+.col-r{color:var(--danger);font-weight:700;font-size:11px}
+.col-g{color:var(--green);font-weight:700;font-size:11px}
+
+/* ── CODE BLOCK ── */
+.code{background:#1a2e2b;border-radius:12px;padding:16px;margin:12px 0;overflow-x:auto}
+.code code{color:#7ee8a2;font-family:'Courier New',monospace;font-size:13px;line-height:1.7;white-space:pre}
+.code .c-key{color:#71C9CD}.code .c-val{color:#FBB634}.code .c-comment{color:#6B6C6E}
+
+/* ── PILL TAGS ── */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.pill-p{background:var(--pbg);color:var(--p)}
+.pill-y{background:#fff8e8;color:#7a5500}
+.pill-r{background:#fff0f0;color:var(--danger)}
+.pill-g{background:#f0fae8;color:#4a7a10}
+
+/* ── FAQ ── */
+.faq{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:10px}
+.faq summary{padding:14px 18px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;background:#fff}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'＋';font-size:16px;color:var(--p);transition:transform .2s;flex-shrink:0}
+details[open] .faq summary::after{content:'－'}
+.faq-body{padding:0 18px 16px;font-size:14px;color:var(--muted);line-height:1.6;background:#fff;border-top:1px solid var(--border)}
+
+/* ── FEATURE GRID ── */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px}
+.feat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.feat-ico{font-size:32px;margin-bottom:10px}
+.feat h4{font-size:13px;font-weight:800;margin-bottom:5px}
+.feat p{font-size:12px;color:var(--muted)}
+
+/* ── SHORTCUT TABLE ── */
+.kbd{display:inline-block;background:#f4f4f4;border:1px solid #d0d0d0;border-radius:5px;padding:2px 7px;font-family:monospace;font-size:12px;color:#333}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);color:rgba(255,255,255,.6);text-align:center;padding:28px 20px;font-size:13px;margin-top:60px}
+footer strong{color:#fff}
+footer a{color:var(--pl);text-decoration:none}
+
+/* ── PRINT ── */
+@media print{
+  .sidebar,.hero-badge{display:none}
+  .layout{grid-template-columns:1fr;padding:0}
+  section{page-break-inside:avoid}
+  body{background:#fff}
+  .mockup{box-shadow:none}
+}
+
+/* ── SCROLL INDICATOR ── */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--p),var(--pl));z-index:999;transition:width .1s}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="pbar"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-logo">
+      <img src="FFFFF.svg" alt="Mentora" onerror="this.style.display='none';document.getElementById('hl').style.display='block'">
+      <span id="hl" style="display:none">MENTORA</span>
+    </div>
+  </div>
+  <h1>Manual de Uso<br>Sistema QR Institucional</h1>
+  <p>Guía completa para generar, personalizar y exportar códigos QR educativos de forma masiva o individual.</p>
+  <div class="hero-badge">📘 Versión 1.0 &nbsp;·&nbsp; Grupo Mentora &nbsp;·&nbsp; 2025</div>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>Contenido</h3>
+      <a class="nav-link active" href="#intro"><span class="ico">🏠</span>Introducción</a>
+      <a class="nav-link" href="#requisitos"><span class="ico">✅</span>Requisitos</a>
+      <a class="nav-link" href="#excel"><span class="ico">📊</span>Formato Excel</a>
+      <a class="nav-link" href="#masivo"><span class="ico">⚡</span>Generación Masiva</a>
+      <a class="nav-link" href="#manual"><span class="ico">✏️</span>Modo Manual</a>
+      <a class="nav-link" href="#exportar"><span class="ico">📦</span>Exportar</a>
+      <a class="nav-link" href="#pdf-diseño"><span class="ico">🖨️</span>Diseño del PDF</a>
+      <a class="nav-link" href="#errores"><span class="ico">⚠️</span>Errores comunes</a>
+      <a class="nav-link" href="#faq"><span class="ico">❓</span>Preguntas frecuentes</a>
+      <hr style="border:none;border-top:1px solid var(--border);margin:10px 0">
+      <a class="nav-link" href="index.html" style="color:var(--p)"><span class="ico" style="background:var(--p)">🚀</span>Abrir el sistema</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <!-- ══ INTRODUCCIÓN ══ -->
+    <section id="intro">
+      <h2><span class="s-ico">🏠</span>Introducción</h2>
+      <p style="font-size:15px;color:var(--muted);margin-bottom:20px">
+        El <strong style="color:var(--text)">Sistema QR Institucional de Mentora</strong> permite generar códigos QR únicos para cada alumno a partir de un archivo Excel. Cada QR lleva a la URL del sistema con el usuario del alumno ya precargado, facilitando el acceso sin que el alumno deba escribir nada.
+      </p>
+
+      <div class="feat-grid">
+        <div class="feat"><div class="feat-ico">📊</div><h4>Carga masiva</h4><p>Sube un Excel con cientos o miles de alumnos y genera todos los QRs en segundos</p></div>
+        <div class="feat"><div class="feat-ico">📄</div><h4>PDFs por grupo</h4><p>Exporta un PDF separado por cada grupo o sección, listo para imprimir</p></div>
+        <div class="feat"><div class="feat-ico">📦</div><h4>ZIP completo</h4><p>Descarga todos los PDFs comprimidos en un solo archivo ZIP</p></div>
+        <div class="feat"><div class="feat-ico">✏️</div><h4>Modo manual</h4><p>Genera un QR individual para cualquier alumno en segundos</p></div>
+        <div class="feat"><div class="feat-ico">🔍</div><h4>Búsqueda y filtro</h4><p>Filtra la vista previa por grupo o busca un alumno específico</p></div>
+        <div class="feat"><div class="feat-ico">🌐</div><h4>Sin instalación</h4><p>Funciona directamente en el navegador. No requiere internet ni servidor</p></div>
+      </div>
+    </section>
+
+    <!-- ══ REQUISITOS ══ -->
+    <section id="requisitos">
+      <h2><span class="s-ico">✅</span>Requisitos</h2>
+      <div class="callout callout-tip">
+        <span class="callout-ico">💡</span>
+        <span>No se necesita instalar ningún programa. El sistema funciona completamente en el navegador web.</span>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Requisito</th><th>Detalle</th><th>Estado</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Navegador web</strong></td><td>Chrome 90+, Firefox 88+, Safari 14+, Edge 90+</td><td><span class="pill pill-g">✓ Obligatorio</span></td></tr>
+            <tr><td><strong>Archivo Excel</strong></td><td>Formato .xlsx o .xls con columnas Grupo, Usuario, Alumno</td><td><span class="pill pill-g">✓ Obligatorio</span></td></tr>
+            <tr><td><strong>URL base</strong></td><td>La URL del sistema al que apuntarán los QRs</td><td><span class="pill pill-g">✓ Obligatorio</span></td></tr>
+            <tr><td><strong>Internet</strong></td><td>Solo necesario la primera vez para cargar las librerías CDN</td><td><span class="pill pill-y">⚡ Recomendado</span></td></tr>
+            <tr><td><strong>Logo (FFFFF.svg)</strong></td><td>Debe estar en la misma carpeta que index.html</td><td><span class="pill pill-y">⚡ Recomendado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-ico">⚠️</span>
+        <span>Si abres el sistema desde un servidor local (ej. <kbd class="kbd">http://localhost</kbd>), el logo cargará correctamente. Si lo abres como archivo directo (<kbd class="kbd">file://</kbd>) desde algunas computadoras, el logo podría no aparecer en los PDFs por restricciones de seguridad del navegador — pero los QRs y demás funciones sí funcionan.</span>
+      </div>
+    </section>
+
+    <!-- ══ FORMATO EXCEL ══ -->
+    <section id="excel">
+      <h2><span class="s-ico">📊</span>Formato del Archivo Excel</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">El Excel debe tener exactamente estas tres columnas en la primera fila. El nombre de la columna no distingue mayúsculas/minúsculas.</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Columna</th><th>Descripción</th><th>Ejemplo</th><th>Obligatorio</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="pill pill-p">Grupo</span></td>
+              <td>Nombre del grupo o sección. Se usará para separar los PDFs y como encabezado de cada tarjeta QR.</td>
+              <td><code>PRIMERO-A-2026</code></td>
+              <td><span class="col-r">SÍ</span></td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-p">Usuario</span></td>
+              <td>Identificador único del alumno. Se concatena al final de la URL base para formar el enlace del QR.</td>
+              <td><code>luna84338</code></td>
+              <td><span class="col-r">SÍ</span></td>
+            </tr>
+            <tr>
+              <td><span class="pill pill-p">Alumno</span></td>
+              <td>Nombre completo del estudiante. Aparece en la tarjeta QR y en el PDF.</td>
+              <td><code>AC.SAMUEL</code></td>
+              <td><span class="col-r">SÍ</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:15px;font-weight:800;margin:20px 0 10px">Ejemplo de archivo correcto:</h3>
+      <div class="mockup">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div><span class="mockup-title">alumnos_2026.xlsx</span></div>
+        <div class="mockup-body">
+          <div class="tbl-wrap" style="margin:0">
+            <table>
+              <thead><tr><th>Grupo</th><th>Usuario</th><th>Alumno</th></tr></thead>
+              <tbody>
+                <tr><td>PRIMERO-A-2026</td><td>luna84338</td><td>AC.SAMUEL</td></tr>
+                <tr><td>PRIMERO-A-2026</td><td>ave39092</td><td>BV.NICOLAS</td></tr>
+                <tr><td>PRIMERO-B-2026</td><td>pera8010</td><td>CA.LUCA</td></tr>
+                <tr><td>SEGUNDO-A-2026</td><td>sol73423</td><td>CH.BRANDON</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-ico">ℹ️</span>
+        <div>
+          <strong>¿Cómo funciona la URL?</strong><br>
+          Si la URL base es <code>https://sistema.mentora.edu/acceso?user=</code> y el usuario es <code>luna84338</code>, el QR generado apuntará a:<br>
+          <code style="color:var(--p);font-size:13px">https://sistema.mentora.edu/acceso?user=luna84338</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ GENERACIÓN MASIVA ══ -->
+    <section id="masivo">
+      <h2><span class="s-ico">⚡</span>Generación Masiva</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:20px">Sigue estos 4 pasos para generar los QRs de todos tus alumnos desde un archivo Excel.</p>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Ingresar la URL Base y subir el Excel</h3>
+            <p>En la parte superior del Paso 1 escribe la <strong>URL base</strong> del sistema. Es el enlace al que se accederá cuando se escanee cada QR — el usuario del alumno se agregará automáticamente al final.</p>
+            <ul>
+              <li>Debajo de la URL, verás una vista previa de cómo quedará el enlace con la palabra <strong>USUARIO</strong> al final.</li>
+              <li>Arrastra tu archivo Excel al área marcada, o haz clic en ella para seleccionarlo.</li>
+              <li>El sistema acepta archivos <strong>.xlsx</strong> y <strong>.xls</strong>.</li>
+            </ul>
+            <div class="callout callout-tip" style="margin-top:10px">
+              <span class="callout-ico">💡</span>
+              <span>Asegúrate de que la URL base termine con el parámetro del usuario, por ejemplo: <code>https://dominio.com/login?id=</code></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Revisar los datos y validar</h3>
+            <p>Una vez subido el Excel, el Paso 2 mostrará automáticamente:</p>
+            <ul>
+              <li><strong>Estadísticas:</strong> total de alumnos, número de grupos y cantidad de advertencias.</li>
+              <li><strong>Vista previa</strong> de los primeros 10 registros con la URL que tendrá cada QR.</li>
+              <li><strong>Advertencias</strong> si hay filas incompletas o usuarios duplicados (se muestran en rojo).</li>
+            </ul>
+            <p style="margin-top:8px">Si hay advertencias puedes <strong>descargar el reporte de errores</strong> (archivo CSV) para revisar qué filas tienen problema. Los alumnos válidos sí se procesarán aunque haya advertencias.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Generar todos los QRs</h3>
+            <p>Haz clic en el botón <strong>⚡ Generar todos los QRs</strong>. Verás una barra de progreso mientras se crean los códigos. El tiempo varía según la cantidad de alumnos:</p>
+            <ul>
+              <li>~100 alumnos → menos de 1 segundo</li>
+              <li>~700 alumnos → 3–5 segundos</li>
+              <li>~2000 alumnos → 10–15 segundos</li>
+            </ul>
+            <p style="margin-top:8px">Al terminar, aparecerá una <strong>grilla de tarjetas QR</strong> con barra de búsqueda y filtro por grupo. Desde cada tarjeta puedes descargar el QR como PNG individual.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Exportar los PDFs</h3>
+            <p>El Paso 4 muestra el <strong>panel de exportación</strong> con tres opciones:</p>
+            <ul>
+              <li><strong>📦 ZIP completo:</strong> descarga todos los PDFs de todos los grupos en un solo archivo comprimido. <span class="pill pill-g">Recomendado</span></li>
+              <li><strong>📄 Todos los PDFs:</strong> descarga cada PDF de forma individual, uno por uno.</li>
+              <li><strong>Por grupo:</strong> selecciona cualquier grupo de la lista y descarga solo su PDF.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ MODO MANUAL ══ -->
+    <section id="manual">
+      <h2><span class="s-ico">✏️</span>Generación Manual (Individual)</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">
+        Usa la pestaña <strong>✏️ Generación Manual</strong> para crear un QR individual de forma rápida, sin necesidad de subir un Excel.
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Completar el formulario</h3>
+            <p>Rellena los tres campos:</p>
+            <ul>
+              <li><strong>Nombre del alumno:</strong> aparecerá en la tarjeta y en el PDF.</li>
+              <li><strong>Usuario:</strong> se concatenará a la URL base para formar el enlace del QR.</li>
+              <li><strong>URL Base:</strong> la misma URL que usarías en el modo masivo.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Generar y descargar</h3>
+            <p>Haz clic en <strong>⚡ Generar QR</strong>. Aparecerá una vista previa de la tarjeta con el QR centrado. Luego puedes:</p>
+            <ul>
+              <li><strong>⬇️ PNG:</strong> descarga solo la imagen del código QR.</li>
+              <li><strong>📄 PDF:</strong> descarga una tarjeta PDF con el diseño institucional completo (logo, nombre, QR).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ EXPORTAR ══ -->
+    <section id="exportar">
+      <h2><span class="s-ico">📦</span>Opciones de Exportación</h2>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Opción</th><th>Qué descarga</th><th>Cuándo usarla</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>📦 ZIP completo</strong></td>
+              <td>Un archivo .zip con un PDF por cada grupo</td>
+              <td>Para entregar todo a un coordinador o archivar</td>
+            </tr>
+            <tr>
+              <td><strong>📄 Todos los PDFs</strong></td>
+              <td>Cada PDF descargado uno tras otro</td>
+              <td>Cuando necesitas los archivos por separado en tu carpeta</td>
+            </tr>
+            <tr>
+              <td><strong>PDF por grupo</strong></td>
+              <td>Solo el PDF del grupo seleccionado</td>
+              <td>Para entregar a un docente específico</td>
+            </tr>
+            <tr>
+              <td><strong>⬇️ PNG individual</strong></td>
+              <td>La imagen del QR (sin diseño de tarjeta)</td>
+              <td>Para pegar el QR en otro documento o sistema</td>
+            </tr>
+            <tr>
+              <td><strong>📄 PDF individual (manual)</strong></td>
+              <td>Tarjeta PDF de un solo alumno</td>
+              <td>Para imprimir rápido sin cargar un Excel</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-ico">💡</span>
+        <span>Al generar el ZIP, todos los PDFs se crean en segundo plano antes de comprimir. Para 20 grupos esto puede tardar entre 10 y 30 segundos — el botón mostrará el progreso.</span>
+      </div>
+    </section>
+
+    <!-- ══ DISEÑO PDF ══ -->
+    <section id="pdf-diseño">
+      <h2><span class="s-ico">🖨️</span>Diseño del PDF para Impresión</h2>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Cada PDF se genera en formato <strong>carta (216 × 279 mm)</strong> con 6 tarjetas por página (2 columnas × 3 filas).</p>
+
+      <div class="mockup">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div><span class="mockup-title">Vista esquemática de una página del PDF</span></div>
+        <div class="mockup-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:500px;margin:0 auto">
+            <!-- 6 mockup cards -->
+            <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;font-size:11px">
+              <div style="background:var(--p);color:#fff;padding:5px 8px;font-weight:700;font-size:10px">NOMBRE DEL GRUPO</div>
+              <div style="padding:10px;text-align:center">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:2px">MENTORA</div>
+                <div style="background:#eee;height:50px;border-radius:6px;margin:6px auto;width:50px;display:flex;align-items:center;justify-content:center;font-size:18px">▦</div>
+                <div style="font-weight:800;font-size:11px">NOMBRE ALUMNO</div>
+                <div style="font-size:9px;color:var(--muted)">@usuario</div>
+              </div>
+            </div>
+            <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;font-size:11px">
+              <div style="background:var(--p);color:#fff;padding:5px 8px;font-weight:700;font-size:10px">NOMBRE DEL GRUPO</div>
+              <div style="padding:10px;text-align:center">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:2px">MENTORA</div>
+                <div style="background:#eee;height:50px;border-radius:6px;margin:6px auto;width:50px;display:flex;align-items:center;justify-content:center;font-size:18px">▦</div>
+                <div style="font-weight:800;font-size:11px">NOMBRE ALUMNO</div>
+                <div style="font-size:9px;color:var(--muted)">@usuario</div>
+              </div>
+            </div>
+            <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;font-size:11px">
+              <div style="background:var(--p);color:#fff;padding:5px 8px;font-weight:700;font-size:10px">NOMBRE DEL GRUPO</div>
+              <div style="padding:10px;text-align:center">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:2px">MENTORA</div>
+                <div style="background:#eee;height:50px;border-radius:6px;margin:6px auto;width:50px;display:flex;align-items:center;justify-content:center;font-size:18px">▦</div>
+                <div style="font-weight:800;font-size:11px">NOMBRE ALUMNO</div>
+                <div style="font-size:9px;color:var(--muted)">@usuario</div>
+              </div>
+            </div>
+            <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;font-size:11px">
+              <div style="background:var(--p);color:#fff;padding:5px 8px;font-weight:700;font-size:10px">NOMBRE DEL GRUPO</div>
+              <div style="padding:10px;text-align:center">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:2px">MENTORA</div>
+                <div style="background:#eee;height:50px;border-radius:6px;margin:6px auto;width:50px;display:flex;align-items:center;justify-content:center;font-size:18px">▦</div>
+                <div style="font-weight:800;font-size:11px">NOMBRE ALUMNO</div>
+                <div style="font-size:9px;color:var(--muted)">@usuario</div>
+              </div>
+            </div>
+            <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;font-size:11px">
+              <div style="background:var(--p);color:#fff;padding:5px 8px;font-weight:700;font-size:10px">NOMBRE DEL GRUPO</div>
+              <div style="padding:10px;text-align:center">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:2px">MENTORA</div>
+                <div style="background:#eee;height:50px;border-radius:6px;margin:6px auto;width:50px;display:flex;align-items:center;justify-content:center;font-size:18px">▦</div>
+                <div style="font-weight:800;font-size:11px">NOMBRE ALUMNO</div>
+                <div style="font-size:9px;color:var(--muted)">@usuario</div>
+              </div>
+            </div>
+            <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;font-size:11px">
+              <div style="background:var(--p);color:#fff;padding:5px 8px;font-weight:700;font-size:10px">NOMBRE DEL GRUPO</div>
+              <div style="padding:10px;text-align:center">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:2px">MENTORA</div>
+                <div style="background:#eee;height:50px;border-radius:6px;margin:6px auto;width:50px;display:flex;align-items:center;justify-content:center;font-size:18px">▦</div>
+                <div style="font-weight:800;font-size:11px">NOMBRE ALUMNO</div>
+                <div style="font-size:9px;color:var(--muted)">@usuario</div>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:10px">6 tarjetas por página — 2 columnas × 3 filas — Formato carta</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:15px;font-weight:800;margin:20px 0 10px">Anatomía de cada tarjeta:</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Elemento</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Encabezado verde</strong></td><td>Nombre del grupo en color corporativo Mentora (#289889)</td></tr>
+            <tr><td><strong>Logo</strong></td><td>Logo institucional de Mentora (cargado desde FFFFF.svg)</td></tr>
+            <tr><td><strong>Nombre del alumno</strong></td><td>En negrita, centrado debajo del logo</td></tr>
+            <tr><td><strong>Usuario</strong></td><td>Identificador precedido por @, en gris</td></tr>
+            <tr><td><strong>Código QR</strong></td><td>Centrado, 40 × 40 mm, alta legibilidad</td></tr>
+            <tr><td><strong>Pie de página</strong></td><td>"Grupo Mentora — Sistema Educativo" y número de página</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-ico">🖨️</span>
+        <span>Para mejor resultado al imprimir, usa papel carta de 75 g/m² o superior. Configura la impresora en <strong>Sin márgenes</strong> o <strong>Ajustar a página</strong>. Los QRs tienen margen de error nivel M (tolerancia ~15%) para lectura con el papel doblado o con pequeños defectos de impresión.</span>
+      </div>
+    </section>
+
+    <!-- ══ ERRORES ══ -->
+    <section id="errores">
+      <h2><span class="s-ico">⚠️</span>Errores y Advertencias Comunes</h2>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-num" style="background:var(--danger)">!</div>
+          <div class="step-body">
+            <h3>Columnas faltantes</h3>
+            <p><strong>Mensaje:</strong> <em>"Columnas faltantes: Grupo / Usuario / Alumno"</em></p>
+            <p style="margin-top:6px">El Excel no tiene las tres columnas requeridas en la primera fila. Revisa que los encabezados sean exactamente <code>Grupo</code>, <code>Usuario</code> y <code>Alumno</code> (sin tildes, sin espacios extra).</p>
+            <div class="callout callout-tip" style="margin-top:8px"><span class="callout-ico">💡</span><span>El sistema acepta mayúsculas y minúsculas: <code>GRUPO</code>, <code>grupo</code>, <code>Grupo</code> son equivalentes.</span></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:var(--orange)">!</div>
+          <div class="step-body">
+            <h3>Usuario duplicado</h3>
+            <p><strong>Mensaje:</strong> <em>"Fila X: usuario duplicado 'abc123' (ya en fila Y)"</em></p>
+            <p style="margin-top:6px">El mismo usuario aparece dos veces en el Excel. Solo se tomará la primera ocurrencia; la segunda se marcará como advertencia. Descarga el reporte CSV para identificar los duplicados.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:var(--orange)">!</div>
+          <div class="step-body">
+            <h3>Fila con campos incompletos</h3>
+            <p><strong>Mensaje:</strong> <em>"Fila X: campos incompletos"</em></p>
+            <p style="margin-top:6px">Una fila tiene alguno de los tres campos vacío. Esa fila no se procesará. Las filas completamente en blanco (spacers) se ignoran automáticamente.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:var(--gray)">!</div>
+          <div class="step-body">
+            <h3>El logo no aparece en el PDF</h3>
+            <p>Esto ocurre cuando el archivo <code>FFFFF.svg</code> no está en la misma carpeta que <code>index.html</code>, o cuando el navegador bloquea la carga de archivos locales (protocolo <code>file://</code>).</p>
+            <p style="margin-top:6px"><strong>Solución:</strong> Asegúrate de que ambos archivos estén en la misma carpeta. Si el problema persiste, usa un servidor local simple o abre el archivo desde Chrome/Edge que tienen mayor permisividad.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num" style="background:var(--gray)">!</div>
+          <div class="step-body">
+            <h3>Las librerías no cargan</h3>
+            <p>Si el navegador muestra errores como <em>"QRCode is not defined"</em> o <em>"XLSX is not defined"</em>, significa que las librerías CDN no cargaron (sin conexión a internet o CDN bloqueado).</p>
+            <p style="margin-top:6px"><strong>Solución:</strong> Verifica tu conexión a internet. Las librerías solo se descargan la primera vez; después quedan en caché del navegador.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ FAQ ══ -->
+    <section id="faq">
+      <h2><span class="s-ico">❓</span>Preguntas Frecuentes</h2>
+
+      <details class="faq">
+        <summary class="faq">¿Cuántos alumnos puede procesar el sistema?</summary>
+        <div class="faq-body">El sistema no tiene un límite fijo. Ha sido probado con más de 670 alumnos en menos de 5 segundos. Para archivos de más de 2000 alumnos se recomienda Chrome o Edge para mejor rendimiento. El procesamiento se hace en lotes para no bloquear el navegador.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿Los datos del Excel se envían a algún servidor?</summary>
+        <div class="faq-body">No. Todo el procesamiento ocurre localmente en tu navegador. Ningún dato (nombres, usuarios, URLs) sale de tu computadora. El único tráfico externo son las librerías JavaScript descargadas desde CDN la primera vez.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿Puedo usar el sistema sin internet después de la primera carga?</summary>
+        <div class="faq-body">Sí, siempre que el navegador haya cacheado las librerías CDN. Chrome y Edge guardan en caché estos archivos por varios días. Si necesitas uso offline garantizado, puedes descargar las librerías y referenciarlas localmente en el HTML.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿Qué hago si el QR no escanea correctamente?</summary>
+        <div class="faq-body">Verifica que la URL base esté bien escrita y que el usuario no tenga caracteres especiales conflictivos con URLs (como &amp;, =, espacios). Prueba escanear el QR desde la vista previa de pantalla antes de imprimir. El sistema usa corrección de error nivel M que tolera hasta 15% de daño en el código.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿Puedo cambiar la URL base después de generar los QRs?</summary>
+        <div class="faq-body">No directamente — deberías volver al Paso 1, cambiar la URL y volver a hacer clic en "Generar todos los QRs". El proceso tarda pocos segundos así que no es un problema práctico.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿El sistema guarda el historial de generaciones anteriores?</summary>
+        <div class="faq-body">No. Al cerrar o recargar la página, todos los datos se pierden. Si necesitas regenerar, debes volver a subir el Excel. Se recomienda guardar los ZIPs generados como respaldo.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿Puedo tener columnas adicionales en el Excel?</summary>
+        <div class="faq-body">Sí. El sistema solo lee las columnas Grupo, Usuario y Alumno e ignora el resto. Puedes tener columnas extra como email, teléfono, etc., sin que afecten el funcionamiento.</div>
+      </details>
+
+      <details class="faq">
+        <summary class="faq">¿Cómo imprimo solo las tarjetas de un grupo específico?</summary>
+        <div class="faq-body">En el Paso 4 (Panel de Exportación), busca el grupo en la lista y haz clic en su botón <strong>📄 PDF</strong>. Se descargará solo el PDF de ese grupo. También puedes filtrar la vista de pantalla usando el selector de grupo en el Paso 3.</div>
+      </details>
+
+    </section>
+
+    <!-- LINK DE VUELTA -->
+    <div style="text-align:center;margin-top:40px;padding:28px;background:#fff;border:2px solid var(--border);border-radius:20px">
+      <div style="font-size:36px;margin-bottom:12px">🚀</div>
+      <h3 style="font-size:18px;font-weight:900;margin-bottom:8px">¿Listo para usar el sistema?</h3>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:18px">Abre <code>index.html</code> en tu navegador y comienza a generar los QRs de tus alumnos.</p>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--p);color:#fff;padding:12px 28px;border-radius:13px;font-weight:800;font-size:15px;text-decoration:none;box-shadow:0 2px 10px rgba(40,152,137,.3)">
+        ⚡ Ir al Sistema QR
+      </a>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <strong>Sistema QR Institucional</strong> — Grupo Mentora &copy; <span id="yr"></span><br>
+  <span style="font-size:12px;margin-top:6px;display:block">Manual de uso v1.0 &nbsp;·&nbsp; Para soporte técnico contacta a tu administrador</span>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('pbar').style.width = (window.scrollY / h * 100) + '%';
+});
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('.nav-link[href^="#"]');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

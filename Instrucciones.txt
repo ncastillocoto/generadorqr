@@ -1,0 +1,342 @@
+Quiero que actúes como un **Arquitecto Senior de Software + UX/UI + Automatización Documental**, especializado en generación masiva de códigos QR, procesamiento de archivos Excel, generación de PDFs profesionales y aplicaciones web administrativas modernas.
+
+Tu tarea es diseñar y desarrollar un sistema completo, robusto, escalable y visualmente profesional para generación masiva de códigos QR educativos/institucionales.
+
+# CONTEXTO GENERAL
+
+La empresa utilizará:
+
+* Archivo `colores.png` → contiene la línea gráfica y colores corporativos.
+* Archivo `FFFFF.svg` → logo oficial de la empresa.
+
+Debes utilizar estos recursos para mantener coherencia visual y branding corporativo dentro del sistema y los PDFs generados.
+
+---
+
+# OBJETIVO PRINCIPAL
+
+Crear un sistema web que permita generar códigos QR masivos a partir de un enlace base y un archivo Excel cargado por el usuario.
+
+El sistema debe:
+
+1. Recibir un enlace base manualmente.
+2. Recibir un archivo Excel.
+3. Generar automáticamente un QR único por estudiante.
+4. Crear PDFs organizados por grupo.
+5. Permitir también generación manual individual rápida.
+6. Mantener diseño moderno, limpio y corporativo.
+
+---
+
+# FUNCIONAMIENTO DEL QR
+
+El usuario colocará un enlace manualmente.
+
+Ejemplo:
+
+[https://midominio.com/acceso?user=](https://midominio.com/acceso?user=)
+
+El sistema debe tomar automáticamente el valor de la columna:
+
+`usuario`
+
+y concatenarlo al final del enlace.
+
+Ejemplo:
+
+usuario = juan123
+
+Resultado final:
+
+[https://midominio.com/acceso?user=juan123](https://midominio.com/acceso?user=juan123)
+
+Ese resultado será el contenido del código QR individual.
+
+---
+
+# ESTRUCTURA DEL EXCEL
+
+El sistema debe aceptar archivos Excel (.xlsx) con la siguiente estructura exacta:
+
+| grupo | usuario | alumno |
+| ----- | ------- | ------ |
+
+Descripción:
+
+* `grupo` → grupo o sección del estudiante.
+* `usuario` → valor que se agregará al final del enlace.
+* `alumno` → nombre completo del estudiante.
+
+---
+
+# REQUISITOS FUNCIONALES
+
+## 1. CARGA DE EXCEL
+
+El sistema debe:
+
+* Permitir subir Excel.
+* Validar estructura.
+* Mostrar errores claros si faltan columnas.
+* Mostrar vista previa de datos antes de generar.
+* Detectar filas vacías o inválidas.
+* Detectar usuarios duplicados.
+* Permitir descargar reporte de errores si existen.
+
+---
+
+## 2. GENERACIÓN MASIVA DE QR
+
+Por cada fila:
+
+* Generar QR único.
+* Concatenar automáticamente el enlace + usuario.
+* Mostrar el nombre del alumno encima del QR.
+* Mostrar opcionalmente el grupo.
+* Mantener formato uniforme.
+
+---
+
+# DISEÑO VISUAL DEL QR
+
+Cada QR debe generarse en formato tipo ficha/tarjeta.
+
+Elementos:
+
+* Logo de la empresa.
+* Nombre del alumno arriba.
+* Grupo opcional.
+* Código QR centrado.
+* Diseño limpio y legible.
+* Colores corporativos tomados automáticamente desde `colores.png`.
+* Tipografía moderna.
+* Espaciado adecuado para impresión.
+
+Debe verse profesional para impresión institucional.
+
+---
+
+# GENERACIÓN DE PDFs
+
+El sistema debe:
+
+## Separación automática por grupo
+
+Ejemplo:
+
+* Grupo A → PDF independiente.
+* Grupo B → PDF independiente.
+
+## Organización
+
+Dentro del PDF:
+
+* QRs ordenados automáticamente.
+* Diseño optimizado para impresión.
+* Varias tarjetas por página.
+* Márgenes correctos.
+* Compatible con impresión carta/A4.
+
+## Exportaciones
+
+Permitir:
+
+* Descargar todos los PDFs.
+* Descargar ZIP completo.
+* Descargar un solo grupo.
+* Descargar QR individual.
+
+---
+
+# MODO MANUAL
+
+Debe existir una sección rápida donde el usuario pueda:
+
+* Escribir nombre del alumno.
+* Escribir usuario.
+* Pegar enlace base.
+* Generar un QR individual instantáneamente.
+* Descargar PDF individual.
+
+---
+
+# EXPERIENCIA DE USUARIO (UX/UI)
+
+Diseñar interfaz:
+
+* Moderna.
+* Minimalista.
+* Corporativa.
+* Responsive.
+* Muy simple para usuarios no técnicos.
+
+Debe incluir:
+
+* Dashboard limpio.
+* Drag & Drop para Excel.
+* Indicadores de progreso.
+* Estados de carga.
+* Confirmaciones visuales.
+* Vista previa antes de exportar.
+
+---
+
+# REQUISITOS TÉCNICOS
+
+Quiero que definas y justifiques:
+
+## Frontend
+
+Sugiere el stack ideal.
+
+Ejemplos posibles:
+
+* React
+* Next.js
+* Tailwind
+* ShadCN
+* TypeScript
+
+## Backend
+
+Sugiere el stack ideal.
+
+Ejemplos:
+
+* Node.js
+* Express
+* NestJS
+
+## Librerías QR
+
+Elegir la mejor librería para:
+
+* calidad,
+* velocidad,
+* exportación.
+
+## PDFs
+
+Seleccionar la mejor opción para:
+
+* generación masiva,
+* paginación,
+* diseño profesional,
+* rendimiento.
+
+## Excel
+
+Seleccionar mejor librería para:
+
+* lectura,
+* validación,
+* rendimiento.
+
+---
+
+# ESCALABILIDAD
+
+El sistema debe estar preparado para:
+
+* Miles de estudiantes.
+* Generación masiva eficiente.
+* Bajo consumo de memoria.
+* Procesamiento concurrente.
+* Exportación rápida.
+
+Debes proponer arquitectura optimizada.
+
+---
+
+# ENTREGABLES ESPERADOS
+
+Quiero que generes:
+
+## 1. Planificación completa del sistema
+
+* Arquitectura.
+* Flujo funcional.
+* Componentes.
+* Base de datos (si aplica).
+* Manejo de archivos.
+* Seguridad.
+* Rendimiento.
+
+## 2. UX/UI
+
+* Estructura visual.
+* Wireframes conceptuales.
+* Flujo de pantallas.
+* Diseño corporativo.
+
+## 3. Estructura del proyecto
+
+* Carpetas.
+* Módulos.
+* Organización limpia.
+
+## 4. Código completo
+
+* Frontend.
+* Backend.
+* APIs.
+* Generación QR.
+* Generación PDF.
+* Validaciones.
+* Exportaciones.
+
+## 5. Instrucciones de despliegue
+
+* Local.
+* Docker.
+* VPS.
+* Vercel.
+* Railway o similares.
+
+## 6. Optimización
+
+* Buenas prácticas.
+* Manejo de errores.
+* Logging.
+* Escalabilidad futura.
+
+---
+
+# INSTRUCCIONES IMPORTANTES
+
+## Metodología de trabajo
+
+* Primero analiza completamente el proyecto.
+* Luego planifica toda la arquitectura.
+* Después ejecuta el desarrollo por módulos.
+* Explica decisiones técnicas importantes.
+* Prioriza rendimiento y mantenibilidad.
+
+## Calidad del código
+
+* Código limpio.
+* Escalable.
+* Bien comentado.
+* Modular.
+* Profesional.
+* Listo para producción.
+
+## Estilo de respuesta esperado
+
+* Muy estructurado.
+* Técnico pero claro.
+* Paso a paso.
+* Con ejemplos reales.
+* Con enfoque senior/profesional.
+
+## IMPORTANTE
+
+Antes de comenzar el desarrollo:
+
+1. Haz todas las preguntas necesarias para eliminar ambigüedades.
+2. Identifica posibles mejoras funcionales.
+3. Sugiere funcionalidades adicionales útiles.
+4. Propón mejores prácticas técnicas.
+5. Detecta riesgos o limitaciones.
+
+Quiero que pienses como si fueras a construir un sistema institucional real utilizado por miles de estudiantes y docentes.

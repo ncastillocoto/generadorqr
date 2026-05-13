@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema QR Institucional — Mentora</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --p:#289889;--pl:#71C9CD;--pbg:#e8f7f5;
+  --green:#97C94C;--yellow:#FBB634;--orange:#E88439;--danger:#B84041;
+  --gray:#6B6C6E;--bg:#f0f7f6;--white:#fff;--border:#d0ecea;
+  --text:#1a2e2b;--muted:#6B6C6E
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a6b60,var(--p) 55%,var(--pl));padding:14px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 2px 12px rgba(40,152,137,.3)}
+.hdr-logo{background:#fff;border-radius:12px;padding:5px 12px;height:46px;display:flex;align-items:center}
+.hdr-logo img{height:36px;width:auto}
+.hdr-logo span{font-weight:900;font-size:20px;color:var(--p)}
+.hdr-info h1{color:#fff;font-size:19px;font-weight:800;letter-spacing:-.3px}
+.hdr-info p{color:rgba(255,255,255,.85);font-size:12px;margin-top:1px}
+
+/* LAYOUT */
+.main{max-width:1200px;margin:0 auto;padding:22px 16px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:#fff;border:2px solid var(--border);border-radius:16px;padding:4px;width:fit-content;margin-bottom:18px}
+.tab{padding:9px 18px;border-radius:11px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.tab.on{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(40,152,137,.3)}
+.tab:not(.on){background:transparent;color:var(--gray)}
+
+/* CARD */
+.card{background:#fff;border-radius:20px;border:1px solid var(--border);padding:22px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ch{display:flex;align-items:center;gap:11px;margin-bottom:18px}
+.badge{width:30px;height:30px;border-radius:50%;background:var(--p);color:#fff;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ch h2{font-size:17px;font-weight:800}
+.ch p{font-size:12px;color:var(--muted);margin-top:1px}
+
+/* INPUTS */
+.lbl{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+.inp{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:11px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit}
+.inp:focus{border-color:var(--p)}
+.url-chip{background:var(--pbg);border:1px solid #a0ddd8;border-radius:8px;padding:5px 11px;font-size:12px;color:var(--p);font-family:monospace;margin-top:6px;word-break:break-all;display:none}
+
+/* DROP ZONE */
+.drop{border:2px dashed var(--border);border-radius:16px;padding:36px 22px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.drop:hover,.drop.over{border-color:var(--p);background:var(--pbg)}
+.drop.ok{border-color:var(--p);background:var(--pbg)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-ico{font-size:42px;margin-bottom:10px}
+.drop h3{font-size:15px;font-weight:700;margin-bottom:3px}
+.drop p{font-size:12px;color:var(--muted)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--border);border-radius:13px;padding:12px 14px;text-align:center}
+.stat-val{font-size:26px;font-weight:900;color:var(--p)}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:600;margin-top:1px;text-transform:uppercase;letter-spacing:.4px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:11px;border:1px solid var(--border);margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--p);color:#fff;padding:9px 13px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+th:first-child{border-radius:10px 0 0 0}th:last-child{border-radius:0 10px 0 0}
+td{padding:9px 13px;border-bottom:1px solid #f0f0f0}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#fafdfb}
+
+/* ERROR BOX */
+.ebox{background:#fff0f0;border:1px solid #f0c0c0;border-radius:11px;padding:13px 15px;margin-bottom:13px}
+.ebox h4{color:var(--danger);font-size:13px;font-weight:700;margin-bottom:7px}
+.eitem{font-size:12px;color:#8b2020;padding:3px 0;border-bottom:1px solid #f5d0d0}
+.eitem:last-child{border-bottom:none}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:11px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+.btn-p{background:var(--p);color:#fff;box-shadow:0 2px 8px rgba(40,152,137,.25)}
+.btn-p:not(:disabled):hover{background:#1e7a6d;transform:translateY(-1px)}
+.btn-o{background:#fff;color:var(--p);border:2px solid var(--p)}
+.btn-o:hover{background:var(--pbg)}
+.btn-r{background:#fff0f0;color:var(--danger);border:1px solid #f0c0c0}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn-lg{padding:13px 26px;font-size:15px;border-radius:13px}
+
+/* PROGRESS */
+.pbar{height:8px;background:#e0f0ee;border-radius:99px;overflow:hidden;margin:10px 0}
+.pfill{height:100%;background:linear-gradient(90deg,var(--p),var(--pl));border-radius:99px;transition:width .3s ease;width:0}
+.ptxt{font-size:12px;color:var(--p);font-weight:700;text-align:center;margin-bottom:4px}
+
+/* QR GRID */
+.qrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-top:14px}
+.qrc{background:#fff;border:1px solid var(--border);border-radius:15px;overflow:hidden;text-align:center;box-shadow:0 2px 7px rgba(0,0,0,.06);transition:transform .2s}
+.qrc:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.qrc-hdr{background:var(--p);color:#fff;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qrc-body{padding:10px}
+.qrc-name{font-size:12px;font-weight:800;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qrc-user{font-size:10px;color:var(--muted);margin-bottom:8px}
+.qrc-img{display:flex;justify-content:center;margin-bottom:9px}
+.qrc-img img{width:110px;height:110px;border-radius:8px}
+
+/* SEARCH BAR */
+.sbar{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.srch{flex:1;min-width:180px;padding:9px 13px;border:2px solid var(--border);border-radius:11px;font-size:13px;outline:none}
+.srch:focus{border-color:var(--p)}
+.fsel{padding:9px 13px;border:2px solid var(--border);border-radius:11px;font-size:13px;font-weight:600;outline:none;background:#fff;cursor:pointer}
+
+/* EXPORT */
+.glist{display:flex;flex-direction:column;gap:7px}
+.grow{display:flex;justify-content:space-between;align-items:center;background:var(--pbg);border:1px solid #c0e4e0;border-radius:11px;padding:11px 14px}
+.grow-info strong{font-size:13px;font-weight:700}
+.grow-info span{font-size:11px;color:var(--muted);margin-left:7px}
+
+/* MANUAL */
+.fgrp{margin-bottom:14px}
+.fgrp label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+.qr-prev{display:flex;flex-direction:column;align-items:center;padding:22px;background:var(--pbg);border-radius:15px;border:2px solid var(--border);margin-top:16px;max-width:280px}
+.qr-prev .pname{font-size:15px;font-weight:800;margin-top:10px}
+.qr-prev .puser{font-size:12px;color:var(--muted);margin-bottom:4px}
+
+/* ALERTS */
+.alert{padding:11px 14px;border-radius:11px;font-size:13px;margin-bottom:13px;display:flex;align-items:flex-start;gap:9px}
+.alert-ok{background:#e8f7f0;border:1px solid #a0dfbf;color:#1a6040}
+.alert-err{background:#fff0f0;border:1px solid #f0c0c0;color:#8b2020}
+
+/* UTILS */
+.hidden{display:none!important}
+.flex{display:flex}.gap2{gap:8px}.gap3{gap:12px}
+.mt3{margin-top:12px}.mt4{margin-top:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:500px){.row2{grid-template-columns:1fr}}
+
+/* SPINNER */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.spin-p{border-color:rgba(40,152,137,.3);border-top-color:var(--p)}
+
+footer{text-align:center;padding:18px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:#fff;margin-top:36px}
+</style>
+</head>
+<body>
+
+<!-- QR render factory (off-screen) -->
+<div id="qrf" style="position:fixed;left:-9999px;top:-9999px;overflow:hidden;width:0;height:0;pointer-events:none"></div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <img src="FFFFF.svg" alt="Mentora" onerror="this.style.display='none';document.getElementById('logo-txt').style.display='block'">
+    <span id="logo-txt" style="display:none">MENTORA</span>
+  </div>
+  <div class="hdr-info">
+    <h1>Sistema QR Institucional</h1>
+    <p>Generación masiva de códigos QR educativos</p>
+  </div>
+</header>
+
+<div class="main">
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" id="t-masivo" onclick="switchTab('masivo')">📊 Generación Masiva</button>
+  <button class="tab" id="t-manual" onclick="switchTab('manual')">✏️ Generación Manual</button>
+</div>
+
+<!-- ===== PANEL MASIVO ===== -->
+<div id="p-masivo">
+
+  <!-- PASO 1 -->
+  <div class="card">
+    <div class="ch"><div class="badge">1</div><div><h2>URL Base y Archivo Excel</h2><p>Columnas requeridas: Grupo, Usuario, Alumno</p></div></div>
+
+    <div style="margin-bottom:14px">
+      <label class="lbl">🔗 URL Base (se concatenará el Usuario al final)</label>
+      <input id="base-url" class="inp" placeholder="https://midominio.com/acceso?user=" oninput="onUrlInput()">
+      <div id="url-chip" class="url-chip"></div>
+    </div>
+
+    <label class="lbl">📂 Archivo Excel (.xlsx / .xls)</label>
+    <div class="drop" id="dropzone"
+      ondragover="ev.preventDefault();this.classList.add('over')"
+      ondragleave="this.classList.remove('over')"
+      ondrop="this.classList.remove('over');handleDrop(event)">
+      <input type="file" accept=".xlsx,.xls" id="file-inp" onchange="handleFile(this.files[0])">
+      <div class="drop-ico">📂</div>
+      <h3 id="drop-lbl">Arrastra tu Excel aquí o haz clic</h3>
+      <p>.xlsx o .xls — columnas: Grupo, Usuario, Alumno</p>
+    </div>
+
+    <div id="parse-loading" class="hidden mt3" style="text-align:center;color:var(--p);font-size:13px;font-weight:600">
+      <span class="spin spin-p"></span> Procesando Excel...
+    </div>
+    <div id="parse-err" class="alert alert-err hidden mt3"></div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="card hidden" id="paso2">
+    <div class="ch"><div class="badge">2</div><div><h2>Revisar Datos</h2><p id="p2-sub"></p></div></div>
+    <div class="stats" id="stats-box"></div>
+    <div id="err-section"></div>
+    <div class="tbl-wrap">
+      <table><thead><tr><th>#</th><th>Grupo</th><th>Usuario</th><th>Alumno</th><th>URL del QR</th></tr></thead>
+      <tbody id="prev-body"></tbody></table>
+    </div>
+    <p id="prev-more" class="hidden" style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:10px"></p>
+    <div class="flex gap3 mt4" style="justify-content:flex-end;flex-wrap:wrap">
+      <button class="btn btn-r btn-sm hidden" id="btn-errcsv" onclick="downloadErrorCSV()">⬇️ Reporte errores</button>
+      <button class="btn btn-p btn-lg" id="btn-gen" onclick="generateAll()" disabled>⚡ Generar todos los QRs</button>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="card hidden" id="paso3">
+    <div class="ch"><div class="badge">3</div><div><h2>Vista Previa de QRs</h2><p id="p3-sub">Generando...</p></div></div>
+    <div id="prog-section">
+      <p class="ptxt" id="prog-txt"></p>
+      <div class="pbar"><div class="pfill" id="pfill"></div></div>
+    </div>
+    <div class="sbar hidden" id="sbar">
+      <input class="srch" id="srch" placeholder="🔍 Buscar alumno o usuario..." oninput="filterGrid()">
+      <select class="fsel" id="gsel" onchange="filterGrid()"><option value="">Todos los grupos</option></select>
+      <span id="qr-cnt" style="font-size:13px;color:var(--muted);font-weight:600"></span>
+    </div>
+    <div class="qrgrid" id="qrgrid"></div>
+  </div>
+
+  <!-- PASO 4 -->
+  <div class="card hidden" id="paso4">
+    <div class="ch"><div class="badge">4</div><div><h2>Exportar</h2><p>Descarga PDFs por grupo o ZIP completo</p></div></div>
+    <div class="flex gap3 mt3" style="flex-wrap:wrap;margin-bottom:18px">
+      <button class="btn btn-p btn-lg" id="btn-zip" onclick="downloadZip()">📦 ZIP completo</button>
+      <button class="btn btn-o" id="btn-allpdf" onclick="downloadAllPDFs()">📄 Todos los PDFs</button>
+    </div>
+    <p style="font-size:13px;font-weight:700;margin-bottom:10px">Descargar por grupo:</p>
+    <div class="glist" id="glist"></div>
+  </div>
+
+</div><!-- /p-masivo -->
+
+<!-- ===== PANEL MANUAL ===== -->
+<div id="p-manual" class="hidden">
+  <div class="card">
+    <div class="ch">
+      <div class="badge" style="border-radius:10px;background:var(--pbg)"><span style="color:var(--p)">✏️</span></div>
+      <div><h2>Generador Individual</h2><p>Genera un QR para un alumno específico</p></div>
+    </div>
+    <div class="row2">
+      <div class="fgrp"><label>Nombre del alumno</label><input id="m-name" class="inp" placeholder="Ej: Juan Pérez" oninput="chkManual()"></div>
+      <div class="fgrp"><label>Usuario</label><input id="m-user" class="inp" placeholder="Ej: juan123" oninput="chkManual()"></div>
+    </div>
+    <div class="fgrp"><label>URL Base</label><input id="m-url" class="inp" placeholder="https://midominio.com/acceso?user=" oninput="chkManual()"></div>
+    <button class="btn btn-p" id="btn-mgen" onclick="genManual()" disabled>⚡ Generar QR</button>
+    <div id="m-prev" class="hidden mt4">
+      <div class="qr-prev">
+        <div style="background:var(--p);color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:7px;width:100%;text-align:center">MENTORA</div>
+        <img src="FFFFF.svg" alt="" style="height:28px;margin:8px 0" onerror="this.style.display='none'">
+        <div id="m-qr-wrap" style="margin:8px 0"></div>
+        <div class="pname" id="m-dname"></div>
+        <div class="puser" id="m-duser"></div>
+        <div class="flex gap2 mt3">
+          <button class="btn btn-o btn-sm" onclick="dlManualPNG()">⬇️ PNG</button>
+          <button class="btn btn-p btn-sm" onclick="dlManualPDF()">📄 PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<footer>Sistema QR Institucional — Grupo Mentora © <span id="yr"></span></footer>
+
+<script>
+'use strict';
+
+/* ── STATE ── */
+const S = {
+  baseUrl: '',
+  students: [],   // {grupo, usuario, alumno}
+  errors: [],     // {row, msg}
+  groups: [],     // unique group names
+  qrs: [],        // {grupo, usuario, alumno, qrDataUrl, qrUrl}
+  filtered: [],   // current grid list
+  manualDataUrl: ''
+};
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ── TABS ── */
+function switchTab(t) {
+  document.getElementById('p-masivo').classList.toggle('hidden', t !== 'masivo');
+  document.getElementById('p-manual').classList.toggle('hidden', t === 'masivo');
+  document.getElementById('t-masivo').classList.toggle('on', t === 'masivo');
+  document.getElementById('t-manual').classList.toggle('on', t !== 'masivo');
+}
+
+/* ── URL INPUT ── */
+function onUrlInput() {
+  S.baseUrl = document.getElementById('base-url').value;
+  const chip = document.getElementById('url-chip');
+  if (S.baseUrl.trim()) {
+    chip.textContent = S.baseUrl.trim() + 'USUARIO';
+    chip.style.display = 'block';
+  } else {
+    chip.style.display = 'none';
+  }
+  chkGenBtn();
+}
+
+/* ── DRAG & DROP ── */
+function handleDrop(e) {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0];
+  if (f) handleFile(f);
+}
+
+/* ── EXCEL PARSE ── */
+async function handleFile(file) {
+  if (!file || !/\.(xlsx|xls)$/i.test(file.name)) {
+    showErr('El archivo debe ser .xlsx o .xls');
+    return;
+  }
+  document.getElementById('parse-loading').classList.remove('hidden');
+  document.getElementById('parse-err').classList.add('hidden');
+  document.getElementById('paso2').classList.add('hidden');
+
+  const dz = document.getElementById('dropzone');
+  dz.classList.add('ok');
+  document.getElementById('drop-lbl').textContent = '✅ ' + file.name;
+
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+    if (rows.length < 2) throw new Error('El archivo está vacío.');
+
+    const hdrs = rows[0].map(h => String(h || '').toLowerCase().trim());
+    const ci = { g: hdrs.indexOf('grupo'), u: hdrs.indexOf('usuario'), a: hdrs.indexOf('alumno') };
+    const missing = [ci.g < 0 && 'Grupo', ci.u < 0 && 'Usuario', ci.a < 0 && 'Alumno'].filter(Boolean);
+    if (missing.length) throw new Error('Columnas faltantes: ' + missing.join(', '));
+
+    const students = [], errors = [];
+    const seen = new Map();
+
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      const g = String(r[ci.g] || '').trim();
+      const u = String(r[ci.u] || '').trim();
+      const a = String(r[ci.a] || '').trim();
+      if (!g && !u && !a) continue;
+      if (!g || !u || !a) {
+        errors.push({ row: i + 1, msg: `Fila ${i+1}: campos incompletos (grupo="${g}" usuario="${u}" alumno="${a}")` });
+        continue;
+      }
+      if (seen.has(u)) {
+        errors.push({ row: i + 1, msg: `Fila ${i+1}: usuario duplicado "${u}" (ya en fila ${seen.get(u)})` });
+      } else {
+        seen.set(u, i + 1);
+      }
+      students.push({ grupo: g, usuario: u, alumno: a });
+    }
+
+    const groups = [...new Set(students.map(s => s.grupo))];
+    S.students = students; S.errors = errors; S.groups = groups;
+    renderStep2();
+  } catch(err) {
+    showErr(err.message);
+    dz.classList.remove('ok');
+    document.getElementById('drop-lbl').textContent = 'Arrastra tu Excel aquí o haz clic';
+  } finally {
+    document.getElementById('parse-loading').classList.add('hidden');
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('parse-err');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.remove('hidden');
+}
+
+/* ── STEP 2 ── */
+function renderStep2() {
+  const { students, errors, groups, baseUrl } = S;
+
+  // Stats
+  document.getElementById('stats-box').innerHTML =
+    stat(students.length, 'Alumnos') +
+    stat(groups.length, 'Grupos') +
+    stat(errors.length, 'Advertencias', errors.length > 0 ? 'var(--danger)' : 'var(--green)');
+
+  document.getElementById('p2-sub').textContent =
+    `${students.length} alumnos en ${groups.length} grupos${errors.length ? ` — ${errors.length} advertencias` : ''}`;
+
+  // Errors
+  const es = document.getElementById('err-section');
+  if (errors.length) {
+    const items = errors.slice(0, 15).map(e => `<div class="eitem">⚠️ ${esc(e.msg)}</div>`).join('');
+    const more = errors.length > 15 ? `<div class="eitem" style="font-weight:700">...y ${errors.length-15} más</div>` : '';
+    es.innerHTML = `<div class="ebox"><h4>⚠️ ${errors.length} advertencias encontradas</h4>${items}${more}</div>`;
+    document.getElementById('btn-errcsv').classList.remove('hidden');
+  } else {
+    es.innerHTML = '';
+    document.getElementById('btn-errcsv').classList.add('hidden');
+  }
+
+  // Table
+  const url = S.baseUrl.trim();
+  const preview = students.slice(0, 10);
+  document.getElementById('prev-body').innerHTML = preview.map((s, i) =>
+    `<tr><td style="color:var(--muted);font-size:11px">${i+1}</td>
+     <td><span style="background:var(--pbg);color:var(--p);padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700">${esc(s.grupo)}</span></td>
+     <td style="font-family:monospace;font-size:12px">${esc(s.usuario)}</td>
+     <td style="font-weight:600">${esc(s.alumno)}</td>
+     <td style="font-family:monospace;font-size:11px;color:var(--p);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(url+s.usuario)}</td></tr>`
+  ).join('');
+
+  const moreEl = document.getElementById('prev-more');
+  if (students.length > 10) {
+    moreEl.textContent = `Mostrando 10 de ${students.length} alumnos`;
+    moreEl.classList.remove('hidden');
+  } else {
+    moreEl.classList.add('hidden');
+  }
+
+  chkGenBtn();
+  document.getElementById('paso2').classList.remove('hidden');
+}
+
+function stat(val, lbl, color) {
+  return `<div class="stat"><div class="stat-val" style="color:${color||'var(--p)'}">${val}</div><div class="stat-lbl">${lbl}</div></div>`;
+}
+
+function chkGenBtn() {
+  document.getElementById('btn-gen').disabled = !(S.students.length && S.baseUrl.trim());
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── QR GENERATION ── */
+async function batchQR(batchStudents, baseUrl) {
+  const factory = document.getElementById('qrf');
+  const refs = [];
+
+  for (const s of batchStudents) {
+    const div = document.createElement('div');
+    factory.appendChild(div);
+    refs.push({ div, s });
+    new QRCode(div, {
+      text: baseUrl + s.usuario,
+      width: 256, height: 256,
+      colorDark: '#1a1a1a', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  // Wait for QRCode's internal setTimeout(0) to fire
+  await new Promise(r => setTimeout(r, 60));
+
+  return refs.map(({ div, s }) => {
+    const canvas = div.querySelector('canvas');
+    const dataUrl = canvas ? canvas.toDataURL('image/png') : '';
+    div.remove();
+    return { ...s, qrDataUrl: dataUrl, qrUrl: baseUrl + s.usuario };
+  });
+}
+
+async function generateAll() {
+  const { students, baseUrl } = S;
+  document.getElementById('paso3').classList.remove('hidden');
+  document.getElementById('paso4').classList.add('hidden');
+  document.getElementById('sbar').classList.add('hidden');
+  document.getElementById('qrgrid').innerHTML = '';
+  document.getElementById('prog-section').style.display = '';
+
+  const BATCH = 40;
+  const results = [];
+
+  for (let i = 0; i < students.length; i += BATCH) {
+    const batch = await batchQR(students.slice(i, i + BATCH), baseUrl.trim());
+    results.push(...batch);
+    const pct = Math.round((results.length / students.length) * 100);
+    document.getElementById('pfill').style.width = pct + '%';
+    document.getElementById('prog-txt').textContent = `Generando... ${results.length} de ${students.length} (${pct}%)`;
+    await new Promise(r => setTimeout(r, 0));
+  }
+
+  S.qrs = results;
+  S.filtered = results;
+  onQRsDone();
+}
+
+function onQRsDone() {
+  const { qrs, groups } = S;
+  document.getElementById('prog-txt').textContent = `✅ ${qrs.length} QRs generados correctamente`;
+  document.getElementById('pfill').style.width = '100%';
+  document.getElementById('p3-sub').textContent = `${qrs.length} QRs generados`;
+
+  // Populate group filter
+  const gsel = document.getElementById('gsel');
+  gsel.innerHTML = '<option value="">Todos los grupos</option>';
+  groups.forEach(g => {
+    const o = document.createElement('option');
+    o.value = o.textContent = g;
+    gsel.appendChild(o);
+  });
+
+  document.getElementById('sbar').classList.remove('hidden');
+  renderGrid(qrs);
+  buildExportPanel();
+  document.getElementById('paso4').classList.remove('hidden');
+  document.getElementById('paso3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── QR GRID ── */
+function renderGrid(list) {
+  S.filtered = list;
+  document.getElementById('qr-cnt').textContent = list.length + ' QRs';
+  document.getElementById('qrgrid').innerHTML = list.map((s, i) =>
+    `<div class="qrc">
+      <div class="qrc-hdr" title="${esc(s.grupo)}">${esc(s.grupo)}</div>
+      <div class="qrc-body">
+        <div class="qrc-name" title="${esc(s.alumno)}">${esc(s.alumno)}</div>
+        <div class="qrc-user">@${esc(s.usuario)}</div>
+        <div class="qrc-img">${s.qrDataUrl ? `<img src="${s.qrDataUrl}" alt="QR">` : '<span style="color:#ccc;font-size:11px">Sin QR</span>'}</div>
+        <button class="btn btn-o btn-sm" style="width:100%" onclick="dlPNG(${i})">⬇️ PNG</button>
+      </div>
+    </div>`
+  ).join('');
+}
+
+function filterGrid() {
+  const q = document.getElementById('srch').value.toLowerCase();
+  const g = document.getElementById('gsel').value;
+  const list = S.qrs.filter(s =>
+    (!g || s.grupo === g) &&
+    (!q || s.alumno.toLowerCase().includes(q) || s.usuario.toLowerCase().includes(q))
+  );
+  renderGrid(list);
+}
+
+function dlPNG(i) {
+  const s = S.filtered[i];
+  if (!s || !s.qrDataUrl) return;
+  const a = document.createElement('a');
+  a.href = s.qrDataUrl;
+  a.download = `QR_${s.alumno.replace(/[^a-zA-Z0-9]/g,'_')}_${s.usuario}.png`;
+  a.click();
+}
+
+/* ── ERROR CSV ── */
+function downloadErrorCSV() {
+  const rows = ['Fila,Tipo,Mensaje', ...S.errors.map(e => `${e.row},"advertencia","${e.msg.replace(/"/g,'""')}"`)];
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  saveAs(blob, 'reporte_errores.csv');
+}
+
+/* ── PDF GENERATION ── */
+async function getLogoDataUrl() {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth || 300; c.height = img.naturalHeight || 90;
+        c.getContext('2d').drawImage(img, 0, 0);
+        resolve(c.toDataURL('image/png'));
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = 'FFFFF.svg';
+  });
+}
+
+function drawCard(doc, s, x, y, W, H, logo, groupName) {
+  const PR = [40,152,137], WH = [255,255,255], LG = [245,247,246], DT = [20,30,28], MT = [107,108,110], BR = [210,230,228];
+
+  // Background
+  doc.setFillColor(...LG); doc.roundedRect(x,y,W,H,3,3,'F');
+  doc.setDrawColor(...BR); doc.setLineWidth(0.3); doc.roundedRect(x,y,W,H,3,3,'S');
+
+  // Header
+  const hH = 13;
+  doc.setFillColor(...PR); doc.roundedRect(x,y,W,hH,3,3,'F');
+  doc.rect(x, y+hH-3, W, 3, 'F'); // fill bottom corners
+  doc.setTextColor(...WH); doc.setFontSize(6.5); doc.setFont('helvetica','bold');
+  const gTxt = groupName.length > 38 ? groupName.slice(0,35)+'…' : groupName;
+  doc.text(gTxt, x+W/2, y+8.5, { align:'center' });
+
+  // Name
+  const nY = y+hH+9;
+  doc.setTextColor(...DT); doc.setFontSize(8); doc.setFont('helvetica','bold');
+  const nTxt = s.alumno.length > 28 ? s.alumno.slice(0,25)+'…' : s.alumno;
+  doc.text(nTxt, x+W/2, nY, { align:'center' });
+
+  // Username
+  doc.setTextColor(...MT); doc.setFontSize(6); doc.setFont('helvetica','normal');
+  doc.text('@'+s.usuario, x+W/2, nY+4.5, { align:'center' });
+
+  // QR
+  if (s.qrDataUrl) {
+    const qs = 48, qx = x+(W-qs)/2, qy = nY+8;
+    doc.setFillColor(...WH); doc.roundedRect(qx-2,qy-2,qs+4,qs+4,2,2,'F');
+    try { doc.addImage(s.qrDataUrl,'PNG',qx,qy,qs,qs); } catch {}
+  }
+}
+
+async function generateGroupPDF(students, groupName) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'letter' });
+  const PW=216, PH=279, M=10, CG=5, RG=5, COLS=2, ROWS=3;
+  const CW=(PW-M*2-CG)/COLS, CH=(PH-M*2-RG*2)/ROWS;
+
+  for (let i=0; i<students.length; i++) {
+    const pos = i%(COLS*ROWS);
+    if (pos===0 && i>0) doc.addPage();
+    const col=pos%COLS, row=Math.floor(pos/COLS);
+    const x=M+col*(CW+CG), y=M+row*(CH+RG);
+    drawCard(doc, students[i], x, y, CW, CH, null, groupName);
+  }
+
+  const total = doc.getNumberOfPages();
+  for (let p=1; p<=total; p++) {
+    doc.setPage(p);
+    doc.setFontSize(6); doc.setTextColor(107,108,110);
+    doc.text(`Página ${p} de ${total} — ${groupName}`, PW/2, PH-4, { align:'center' });
+  }
+  return doc.output('blob');
+}
+
+/* ── EXPORT PANEL ── */
+function getGroupsMap() {
+  const map = new Map();
+  for (const s of S.qrs) {
+    if (!map.has(s.grupo)) map.set(s.grupo, []);
+    map.get(s.grupo).push(s);
+  }
+  return map;
+}
+
+function buildExportPanel() {
+  const groups = getGroupsMap();
+  const html = [...groups.entries()].map(([g, list], i) =>
+    `<div class="grow">
+      <div class="grow-info"><strong>${esc(g)}</strong><span>${list.length} alumnos</span></div>
+      <button class="btn btn-o btn-sm" onclick="dlGroupPDF(${i})">📄 PDF</button>
+    </div>`
+  ).join('');
+  document.getElementById('glist').innerHTML = html;
+}
+
+async function dlGroupPDF(idx) {
+  const groups = getGroupsMap();
+  const entries = [...groups.entries()];
+  if (idx >= entries.length) return;
+  const [name, students] = entries[idx];
+  const btn = document.querySelectorAll('#glist .btn')[idx];
+  const orig = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+  try {
+    const blob = await generateGroupPDF(students, name);
+    saveAs(blob, `QR_${name.replace(/[^a-zA-Z0-9\-_ ]/g,'_')}.pdf`);
+  } finally { btn.disabled=false; btn.innerHTML=orig; }
+}
+
+async function downloadZip() {
+  const btn = document.getElementById('btn-zip');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Creando ZIP...';
+  try {
+    const groups = getGroupsMap();
+    const zip = new JSZip();
+    let i=0;
+    for (const [name, students] of groups) {
+      const blob = await generateGroupPDF(students, name);
+      zip.file(`${name.replace(/[^a-zA-Z0-9\-_ ]/g,'_')}.pdf`, blob);
+      i++; btn.innerHTML=`<span class="spin"></span> ${i}/${groups.size} PDFs...`;
+    }
+    const zipBlob = await zip.generateAsync({ type:'blob' });
+    saveAs(zipBlob, 'QRs_Mentora.zip');
+  } finally { btn.disabled=false; btn.innerHTML='📦 ZIP completo'; }
+}
+
+async function downloadAllPDFs() {
+  const btn = document.getElementById('btn-allpdf');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> Generando...';
+  try {
+    const groups = getGroupsMap();
+    for (const [name, students] of groups) {
+      const blob = await generateGroupPDF(students, name);
+      saveAs(blob, `QR_${name.replace(/[^a-zA-Z0-9\-_ ]/g,'_')}.pdf`);
+      await new Promise(r => setTimeout(r, 300));
+    }
+  } finally { btn.disabled=false; btn.innerHTML='📄 Todos los PDFs'; }
+}
+
+/* ── MANUAL GENERATOR ── */
+function chkManual() {
+  const ok = document.getElementById('m-name').value.trim() &&
+              document.getElementById('m-user').value.trim() &&
+              document.getElementById('m-url').value.trim();
+  document.getElementById('btn-mgen').disabled = !ok;
+}
+
+async function genManual() {
+  const name = document.getElementById('m-name').value.trim();
+  const user = document.getElementById('m-user').value.trim();
+  const url  = document.getElementById('m-url').value.trim();
+  const full = url + user;
+
+  const wrap = document.getElementById('m-qr-wrap');
+  wrap.innerHTML = '';
+  const div = document.createElement('div');
+  wrap.appendChild(div);
+
+  new QRCode(div, { text: full, width: 180, height: 180, colorDark:'#1a1a1a', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  await new Promise(r => setTimeout(r, 80));
+
+  const canvas = div.querySelector('canvas');
+  S.manualDataUrl = canvas ? canvas.toDataURL('image/png') : '';
+
+  document.getElementById('m-dname').textContent = name;
+  document.getElementById('m-duser').textContent = '@' + user;
+  document.getElementById('m-prev').classList.remove('hidden');
+}
+
+function dlManualPNG() {
+  if (!S.manualDataUrl) return;
+  const user = document.getElementById('m-user').value.trim();
+  const name = document.getElementById('m-name').value.trim();
+  const a = document.createElement('a');
+  a.href = S.manualDataUrl;
+  a.download = `QR_${name.replace(/[^a-zA-Z0-9]/g,'_')}_${user}.png`;
+  a.click();
+}
+
+async function dlManualPDF() {
+  if (!S.manualDataUrl) return;
+  const name = document.getElementById('m-name').value.trim();
+  const user = document.getElementById('m-user').value.trim();
+  const url  = document.getElementById('m-url').value.trim();
+  const student = { grupo:'MENTORA', usuario: user, alumno: name, qrDataUrl: S.manualDataUrl, qrUrl: url+user };
+  const blob = await generateGroupPDF([student], 'MENTORA');
+  saveAs(blob, `QR_${name.replace(/[^a-zA-Z0-9]/g,'_')}.pdf`);
+}
+</script>
+</body>
+</html>
